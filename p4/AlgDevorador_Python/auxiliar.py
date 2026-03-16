@@ -130,6 +130,7 @@ if __name__ == "__main__":
         colores_nodos[nodo] = "red"
     # Visualizar el mapa
     dibujar_mapa_coloreado(mapa, colores_nodos)
+    
 
     # Mostrar información del grafo
     print(f"Número de nodos: {len(mapa['nodos'])}")
