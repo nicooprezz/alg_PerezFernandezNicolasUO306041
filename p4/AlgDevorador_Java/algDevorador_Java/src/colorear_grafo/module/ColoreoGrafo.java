@@ -14,7 +14,6 @@ public class ColoreoGrafo {
         //"nodo" -> "color"
         Map<String, String> coloredMap = new HashMap<>();
 
-        
         //Iteramos sobre el set de claves parea ver los vecinos de cada grafo
         List<String> neighbors;
 

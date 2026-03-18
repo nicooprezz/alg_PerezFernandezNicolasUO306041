@@ -34,7 +34,7 @@ public class Devorador {
 		}
 	}
 
-	private static Map<String, List<String>> convertJsonToString(JSONObject grafoJson) {
+	public static Map<String, List<String>> convertJsonToString(JSONObject grafoJson) {
 		Map<String, List<String>> grafo = new HashMap<>();
 		
 		for (Object key : grafoJson.keySet()) {
