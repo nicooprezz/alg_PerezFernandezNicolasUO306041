@@ -21,7 +21,7 @@ public class Ferry {
     }
 
     private void calcularSumatorio() {
-        for (int i = 0; i <= vehicles.size(); i++) {
+        for (int i = 1; i <= vehicles.size(); i++) {
             this.sumatorio[i] += sumatorio[i - 1] + vehicles.get(i - 1);
         }
     }
@@ -51,6 +51,22 @@ public class Ferry {
     }
 
     public void printData(){
-        System.out.println("Longitud de los carriles:");
+        System.out.println("Longitud de los carriles del barco: " + boatLength);
+        System.out.println("Vehiculos: " + vehicles);
+
+        int n = vehicles.size();
+        boolean solEncontrada = false;
+        for (int l = 0; l <= boatLength; l++) {
+            if (dp[n][l] && sumatorio[n] - l <= boatLength) {
+                System.out.println("Solucion encontrada -> Babor: " + l + " | Estribor: " + (sumatorio[n] - l));
+                solEncontrada = true;
+                break;
+            }
+        }
+        if (!solEncontrada) {
+            System.out.println("No existe solucion: los vehiculos no caben en el ferry.");
+        }
     }
+
+    
 }

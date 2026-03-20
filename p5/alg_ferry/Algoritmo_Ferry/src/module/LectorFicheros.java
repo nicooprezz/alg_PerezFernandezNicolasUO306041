@@ -2,24 +2,35 @@ package module;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-    
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class LectorFicheros {
 
-    public static double[][] leerFichero(String nombreFichero) throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader(nombreFichero));
-        
-        int n = Integer.parseInt(br.readLine().trim());
-        double[][] puntos = new double[n][2];
-        
-        for (int i = 0; i < n; i++) {
-            String linea = br.readLine();
-            String[] coordenadas = linea.split(","); 
-            
-            puntos[i][0] = Double.parseDouble(coordenadas[0]); 
-            puntos[i][1] = Double.parseDouble(coordenadas[1]); 
+    public static class DatosFerry {
+        public final int longitudBarco;
+        public final List<Integer> vehiculos;
+
+        public DatosFerry(int longitudBarco, List<Integer> vehiculos) {
+            this.longitudBarco = longitudBarco;
+            this.vehiculos = vehiculos;
         }
-        
+    }
+
+    public static DatosFerry leerVehiculos(String nombreFichero) throws IOException {
+        nombreFichero = "files/" + nombreFichero;
+        BufferedReader br = new BufferedReader(new FileReader(nombreFichero));
+
+        int boatLength = Integer.parseInt(br.readLine().trim());
+
+        List<Integer> carsLength = new ArrayList<>();
+        String[] tokens = br.readLine().trim().split("\\s+");
+        for (String token : tokens) {
+            carsLength.add(Integer.parseInt(token));
+        }
+
         br.close();
-        return puntos;
+        return new DatosFerry(boatLength, carsLength);
     }
 }

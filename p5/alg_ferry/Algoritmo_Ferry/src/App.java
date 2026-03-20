@@ -1,9 +1,25 @@
+import java.io.IOException;
+import java.util.Arrays;
+
 import module.Ferry;
+import module.LectorFicheros;
 
 public class App {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         
-        Ferry ferry = new Ferry();
+        Ferry ferry = crearFerry("test02.txt");
         ferry.run();
+    }
+
+
+    private static Ferry crearFerry(String nombreFichero) {
+        try {
+            LectorFicheros.DatosFerry datos = LectorFicheros.leerVehiculos(nombreFichero);
+            return new Ferry(datos.longitudBarco, datos.vehiculos);
+        } catch (IOException e) {
+            System.err.println("Error al leer el fichero: " + e.getMessage()
+                    + ". Creando un ferry por defecto.");
+            return new Ferry(10, Arrays.asList(3, 5, 2, 4));
+        }
     }
 }

@@ -34,7 +34,7 @@ def get_colores_vecino(mapa_coloreado, vecinos):
     return colores_vecino
 
 if __name__ == "__main__":
-    n = 10000
+    n = 100
     mapa = generar_mapa_grafo(n)
     solucion = realizar_voraz(mapa["grafo"])
 
