@@ -25,7 +25,7 @@ public class LectorFicheros {
         int boatLength = Integer.parseInt(br.readLine().trim());
 
         List<Integer> carsLength = new ArrayList<>();
-        String[] tokens = br.readLine().trim().split("\\s+");
+        String[] tokens = br.readLine().trim().split(" ");
         for (String token : tokens) {
             carsLength.add(Integer.parseInt(token));
         }
