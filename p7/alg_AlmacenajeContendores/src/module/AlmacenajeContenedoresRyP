@@ -1,0 +1,163 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class AlmacenajeContenedoresRyP{
+
+    private int capacidadC;
+    private Integer[] conjuntoS;
+    private int mejorK; // Número mínimo de contenedores
+
+    private List<List<Integer>> mejorDistribucion = new ArrayList<List<Integer>>();
+
+    private int numLlamadas = 0;
+
+    public AlmacenajeContenedoresRyP(int c, Integer[] toS) {
+        this.capacidadC = c;
+        this.conjuntoS = toS;
+        Arrays.sort(this.conjuntoS, Collections.reverseOrder()); // Heurístico de construcción
+        // Llamar a función que calcule el mejorK
+        this.mejorK = calcularMejorK(conjuntoS);
+    }
+
+    private int calcularMejorK(Integer[] conjuntoS) {
+        // Calcular mejorK haciendo la suma por pares y, si el resto de la división de la suma entre la capacidadC es mayor que 0, sumar 1 a la división
+        int mejorK = 0;
+        for(int i = 0; i + 1 < conjuntoS.length; i+=2){
+            int suma = 0;
+            suma = conjuntoS[i] + conjuntoS[i+1];
+            if(suma % capacidadC > 0){
+                mejorK++;
+            }
+            mejorK += suma / capacidadC;
+        }
+        if(conjuntoS.length%2 != 0){
+            mejorK++;
+        }
+        return mejorK;
+    }
+
+    public static void main(String[] args){
+
+        try (Scanner sc = new Scanner(new FileReader(args[0]))) {
+            int c = sc.nextInt();
+            sc.nextLine();
+            String[] parts = sc.nextLine().split(" ");
+            Integer[] toS = new Integer[parts.length];
+
+            int i = 0;
+            for(String s: parts){
+                toS[i] = Integer.parseInt(s);
+                i++;
+            }
+
+            AlmacenajeContenedoresRyP sol = new AlmacenajeContenedoresRyP(c, toS);
+            sol.resolver();
+        } catch (NumberFormatException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void resolver() {
+        // backtracking
+        List<List<Integer>> contenedores = new ArrayList<List<Integer>>();      
+        backTracking(0, contenedores, sumaTotal());
+        // mostrar solucion
+        mostrarSolucion();
+    }
+
+    private void mostrarSolucion() {
+        System.out.println("\nLista de contenedores y objetos contenidos:\n");
+
+        int i = 1;
+        for (List<Integer> cont : mejorDistribucion) {
+            System.out.print("Contenedor " + i + ": ");
+            for (Integer obj : cont) {
+                System.out.print(obj + " ");
+            }
+            System.out.println();
+            i++;
+        }
+
+        System.out.println("\nEl número de contenedores necesario es " + mejorK);
+        System.out.println("Número de llamadas recursivas: " + numLlamadas);
+    }
+
+    private List<List<Integer>> copiar(List<List<Integer>> contenedores){
+        List<List<Integer>> copia = new ArrayList<>();
+
+        for (List<Integer> cont : contenedores) {
+            copia.add(new ArrayList<>(cont)); // copia profunda
+        }
+
+        return copia;
+    }
+
+    private void backTracking(int indexObject, List<List<Integer>> contenedores, int sumaRestante){
+        // Lower
+        // Calcular el numero de contenedores minimo necesario
+        int lowerBound = (sumaRestante + capacidadC - 1)/capacidadC;
+        if(contenedores.size() +  lowerBound >= mejorK){
+            return;
+        }
+
+        numLlamadas++;
+        // Caso baso (todos los objetos están colocados)
+        if(indexObject == conjuntoS.length){ // Aquí compruebas que has llegado al final de la iteración, una solución
+            if(contenedores.size() < mejorK){
+                mejorK = contenedores.size();
+                mejorDistribucion = copiar(contenedores);
+            }
+            return; // Acaba con la ejecución del backtracking en este punto, si agoto
+        }
+
+        // Podamos: si size de contenedores > mejorK
+        if(contenedores.size() >= mejorK){    // Comento este if para las mediciones sin  poda
+            numLlamadas--; // Si entra por la poda no cuenta la llamada
+            return; 
+        }
+        // Probar a meter en contenedores existentes
+        for(int i = 0; i < contenedores.size(); i++){
+            if(sum(contenedores.get(i)) + conjuntoS[indexObject] <= capacidadC){
+                // Avanzar (probar temporalmente a meter un objeto en un contenedor que existe)
+                contenedores.get(i).add(conjuntoS[indexObject]);
+                backTracking(indexObject+1, contenedores, sumaRestante - conjuntoS[indexObject]);
+                // Si encuentro un estado mejor, lo almaceno
+                // Retroceder
+                contenedores.get(i).remove(contenedores.get(i).size()-1);
+    
+            }
+        }
+
+        // Intentar meterlo en uno nuevo
+        List<Integer> nuevoContenedor = new ArrayList<Integer>();
+        nuevoContenedor.add(conjuntoS[indexObject]);
+        contenedores.add(nuevoContenedor);
+        // Avanzo
+        backTracking(indexObject+1, contenedores, sumaRestante - conjuntoS[indexObject]);
+        // Elimino el último
+        contenedores.remove(contenedores.size()-1);
+        
+    }
+
+    private Integer sum(List<Integer> list) {
+        Integer sum = 0;
+        for(Integer i: list){
+            sum += i;
+        }
+        return sum;
+    }
+
+    private Integer sumaTotal() {
+        int sum = 0;
+        for(int i: conjuntoS){
+            sum += i;
+        }
+        return sum;
+    }
+}

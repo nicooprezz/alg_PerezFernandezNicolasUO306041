@@ -49,7 +49,7 @@ public class AlmacenajeContenedores{
         
         // backtracking
         List<List<Integer>> contenedores = new ArrayList<List<Integer>>();      
-        backTracking(0, contenedores);
+        backTracking(0, contenedores, calcularSumaTotal());
         // mostrar solucion
         mostrarSolucion();
     }
@@ -74,7 +74,7 @@ public class AlmacenajeContenedores{
         return copia;
     }
 
-    private void backTracking(int indexObject, List<List<Integer>> contenedores){
+    private void backTracking(int indexObject, List<List<Integer>> contenedores){//, int sumaRestante){
         // Caso base (todos los objetos están colocados)
         // if(indexObject == conjuntoS.length){ // Aquí compruebas que has llegado al final de la iteración, una solución
         //     if(contenedores.size() < mejorK){
@@ -84,7 +84,7 @@ public class AlmacenajeContenedores{
         //     return; // Acaba con la ejecución del backtracking en este punto, si agoto
         // }
         // Podamos: si size de contenedores > mejorK
-        int lowerBound = (sumaRestante + capacidad - 1) / capacidad;
+        int lowerBound = (sumaRestante + capacidadC - 1) / capacidadC;
 
         if(contenedores.size() + lowerBound >= mejorK) return; 
 
