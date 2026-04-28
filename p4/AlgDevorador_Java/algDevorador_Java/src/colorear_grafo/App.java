@@ -15,7 +15,7 @@ public class App {
 
         // 4. Calculamos la diferencia
         long durationNano = endTime - startTime;
-        
+
         // Lo convertimos a milisegundos para que sea más fácil de leer
         double durationMs = durationNano / 1_000_000.0;
 

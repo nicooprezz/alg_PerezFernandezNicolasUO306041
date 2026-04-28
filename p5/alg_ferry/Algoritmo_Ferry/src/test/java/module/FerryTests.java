@@ -10,18 +10,25 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
+// Suite de pruebas JUnit para verificar el algoritmo del ferry.
+// Cada test carga un fichero de casos de prueba, ejecuta el algoritmo
+// y comprueba que el número máximo de vehículos coincide con el resultado esperado.
 public class FerryTests {
+	// Longitud de los carriles del barco leída del fichero de prueba
 	private int length;
+	// Lista de longitudes de los vehículos a distribuir
 	private List<Integer> vehicles;
 
 	@Test
 	public void test00() {
 		System.out.printf("\n\nCASE 00\n");
+		// Carga los datos de entrada del fichero de prueba 00
 		loadData("files/test00.txt");
 		Ferry problem = new Ferry(length, vehicles);
 		problem.printData();
 		problem.run();
 		problem.printSolutionTable();
+		// Verifica que el número máximo de vehículos es el esperado para este caso
 		assertEquals(5, problem.getMaximumNumberOfVehicles());
 		problem.printPossibleAssignation();
 	}
@@ -110,12 +117,16 @@ public class FerryTests {
 		problem.printPossibleAssignation();
 	}
 
+	// Carga la longitud del barco y los tamaños de los vehículos desde el fichero indicado.
+	// La primera línea contiene la longitud del carril y la segunda los vehículos separados por espacios.
 	private void loadData(String file) {
 		this.vehicles = new ArrayList<Integer>();
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(file));
+			// Primera línea: longitud de los carriles del ferry
 			this.length = Integer.valueOf(reader.readLine());
+			// Segunda línea: tamaños de los vehículos separados por espacio
 			for (String s : reader.readLine().split(" ")) {
 				this.vehicles.add(Integer.valueOf(s));
 			}
@@ -124,6 +135,7 @@ public class FerryTests {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
+			// Cierra el lector en el bloque finally para garantizar la liberación del recurso
 			try {
 				reader.close();
 			} catch (IOException e) {
