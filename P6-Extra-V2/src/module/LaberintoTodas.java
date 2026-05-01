@@ -20,25 +20,79 @@ public class LaberintoTodas {
 
     // Constructor: carga el laberinto desde el fichero de prueba indicado por número
     public LaberintoTodas(int nFichero){
-        cargarTablero(nFichero);
+        laberinto = cargarTablero(nFichero);
         // Guarda el tamaño del laberinto para usarlo en las validaciones de posición
         length = laberinto.length;
     }
 
 
     private void resolver(){
-        // Posición de salida: esquina superior izquierda (fila 0, columna 0)
+        // Posición de entrada: esquina superior izquierda (fila 0, columna 0)
         int fila = 0;
         int col = 0;
 
         //CASO BASE
         // Comprueba si la celda inicial ya es la celda final (laberinto de tamaño 1x1)
-        if(laberinto[fila][col] == laberinto[laberinto.length][laberinto.length])
+        if(length == 1)
             return;
 
+        // Inicializa la matriz de estados con todas las celdas sin visitar
+        estados[][] estado = new estados[length][length];
+        for(int i = 0; i < length; i++)
+            for(int j = 0; j < length; j++)
+                estado[i][j] = estados.CERO;
 
+        // Listas para acumular el camino actual y todos los caminos encontrados
+        List<int[]> caminoActual = new ArrayList<>();
+        List<List<int[]>> todosCaminos = new ArrayList<>();
 
+        // Inicia la exploración recursiva desde la celda de entrada
+        resolverRec(fila, col, estado, caminoActual, todosCaminos);
 
+        // Imprime el número total de caminos y cada uno de ellos
+        System.out.println("Número de caminos encontrados: " + todosCaminos.size());
+        for(int i = 0; i < todosCaminos.size(); i++){
+            System.out.println("Camino " + (i+1) + ":");
+            for(int[] pos : todosCaminos.get(i))
+                System.out.println("  (" + pos[0] + ", " + pos[1] + ")");
+        }
+    }
+
+    // Método recursivo que explora todos los caminos desde (fila, col) hasta la salida.
+    // Usa backtracking: marca la celda actual como UNO, explora los vecinos accesibles
+    // y restaura el estado CERO al retroceder para permitir que otros caminos la visiten.
+    private void resolverRec(int fila, int col, estados[][] estado,
+                              List<int[]> caminoActual, List<List<int[]>> todosCaminos){
+        // Caso base: se ha alcanzado la celda de salida (esquina inferior derecha)
+        if(fila == length - 1 && col == length - 1){
+            // Añade la posición final y guarda una copia del camino completo
+            caminoActual.add(new int[]{fila, col});
+            todosCaminos.add(new ArrayList<>(caminoActual));
+            // Elimina la posición final para continuar explorando otros caminos
+            caminoActual.remove(caminoActual.size() - 1);
+            return;
+        }
+
+        // Marca la celda actual como parte del camino en exploración
+        estado[fila][col] = estados.UNO;
+        // Añade la posición actual al camino en construcción
+        caminoActual.add(new int[]{fila, col});
+
+        // Vectores de desplazamiento: abajo, derecha, arriba, izquierda
+        int[] dFila = { 1,  0, -1,  0};
+        int[] dCol  = { 0,  1,  0, -1};
+
+        for(int d = 0; d < 4; d++){
+            int nFila = fila + dFila[d];
+            int nCol  = col  + dCol[d];
+            // Avanza a la celda vecina si está dentro del laberinto, es transitable y aún no ha sido visitada
+            if(isValid(nFila, nCol) && laberinto[nFila][nCol] != 0 && estado[nFila][nCol] == estados.CERO)
+                resolverRec(nFila, nCol, estado, caminoActual, todosCaminos);
+        }
+
+        // Restaura el estado de la celda y elimina su posición del camino (backtracking)
+        estado[fila][col] = estados.CERO;
+        caminoActual.remove(caminoActual.size() - 1);
     }
 
     // Lee el laberinto desde el fichero "files/casoN.txt" y lo almacena en la matriz laberinto.
